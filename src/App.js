@@ -3,6 +3,7 @@ import './App.css';
 import {VictoryChart} from 'victory';
 import {VictoryArea} from 'victory';
 import {VictoryTheme} from 'victory';
+import {createContainer} from 'victory';
 
 class App extends Component {
   constructor(props) {
@@ -12,7 +13,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-01&end=2021-04-12")
+    fetch("https://api.coindesk.com/v1/bpi/historical/close.json?start=2010-07-17&end=2021-04-12")
         .then(res => res.json())
         .then(
           (result) => {
@@ -31,6 +32,7 @@ class App extends Component {
   }
 
   convert(obj) {
+    
     return Object.keys(obj).map(key => ({
         x: key,
         y: obj[key]
@@ -51,8 +53,16 @@ class App extends Component {
         { x: 5, y: 6}
       ];
     }
+    const VictoryCursorVoronoiContainer = createContainer("cursor", "voronoi");
     return (
-      <VictoryChart theme={VictoryTheme.grayscale}>
+      <VictoryChart theme={VictoryTheme.grayscale} 
+        containerComponent={
+          <VictoryCursorVoronoiContainer
+            labels={({ datum }) => `${datum.x}, ${datum.y}`}
+            events={{onClick: (evt) => alert("x: " + evt.clientX)}}
+            flyoutStyle={{ stroke: "tomato", strokeWidth: 2 }}
+          />
+        }>
         <VictoryArea
           style={{ data: { fill: "#c43a31" } }}
           data={data}
